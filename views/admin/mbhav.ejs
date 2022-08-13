@@ -1,0 +1,79 @@
+<%- include('layout/header') %>
+<%- include('layout/sidebar') %>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Match bhav</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Match Bhav</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+       <div class="card card-primary">
+              
+              <!-- /.card-header -->
+              <!-- form start -->
+              <form action="/admin/new_bhav" method="post">
+                <div class="card-body">
+                  
+                  <div class="form-group">
+                    <label for="id">Market Id</label>
+                    <input type="id" class="form-control" name="market_id" id="exampleInputid2" placeholder="id" required>
+                  </div>
+                     <div class="form-group">
+                    <label for="exampleInputid1">Team 1</label>
+                    <input type="text" class="form-control" name="team1" id="exampleInputid1" placeholder="Team1" required>
+                  </div>
+                   <div class="form-group">
+                    <label for="exampleInputid2">Team 2</label>
+                    <input type="text" class="form-control" name="team2" id="exampleInputid2" placeholder="Team2" required>
+                  </div>
+                 <div class="form-group">
+                    <label for="exampleInputid2">lagai</label>
+                    <input type="number" class="form-control" name="lagai" id="exampleInputid2" placeholder="lagai" required>
+                  </div>
+                   <div class="form-group">
+                    <label for="exampleInputid2">khaai</label>
+                    <input type="number" class="form-control" name="khaai" id="exampleInputid2" placeholder="khaai" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="id2">favorite team</label>
+                   <select class="form-control" name="insert_type" id="id2" required>
+                       <option value"" selected disabled>Please Select</option>
+                       <option value="team1">team1</option>
+                       <option value="team2">team2</option>
+                   </select>
+                  </div>
+                <div class="form-group">
+                    <label for="exampleInputid2">match amount</label>
+                    <input type="number" class="form-control" name="match_amount" id="exampleInputid2" placeholder="match amount" required>
+                  </div>
+
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                  <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <%- include('layout/footer') %>
+  

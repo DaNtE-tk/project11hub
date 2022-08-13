@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel=" stylesheet" href="/user/main.fed11d0c.css">
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .positive{
+            color: blue;
+        }
+        .negative{
+            color: red;
+        }
+    </style>
+    <title>Session</title>
+</head>
+
+<body>
+    <div id="root">
+        <div class="position-relative content-wrapper">
+            <div class="page-header"
+                style="background-image:url(/media/mob-view-img.fb05bdea1ecbbe025c52.png);height:15% ;">
+                <h4 class="m-0">Session</h4>
+                <p class="m-0"><span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" font-weight="bold"
+                            border: "5px solid currentColor" class="bi bi-wallet" viewBox="0 0 16 16">
+                            <path d="M0 3a2 2 0 0 1 2-2h13.5a.5.5 0 0 1 0 1H15v2a1 1 0 0 1 1 1v8.5a1.5 1.5 0 0 1-1.5 1.5h-12A2.5 2.5 0 0 1 0 12.5V3zm1 1.732V12.5A1.5 1.5 0 0 0 2.5 14h12a.5.5 0 0 0.5-.5V5H2a1.99 1.99 0 0 1-1-.268zM1 3a1 1 0 0 0 1 1h12V2H2a1 1 0 0 0-1 1z" />
+                        </svg>
+                    </span>
+                    <span>&nbsp;&nbsp;<%= user_wallet %></span>
+                    </p>
+            </div>
+            <div class="toast-container position-absolute top-0 start-50 translate-middle-x p-3 position-fixed">
+            </div>
+            <div class="inplay-tabs"><a href="/session"><button type="button" class="active btn btn-primary"
+                        style="width:330px;">Game
+                        Info</button></a>
+                <a href="yourbet"><button type="button" class=" btn btn-primary" style="width:330px;">Your
+                        Bets</button></a>
+            </div>
+            <div class="bet-status"><span class="btn btn-danger">
+                    <marquee behavior="alternate" scrollamount="2">BALL START </marquee>
+                </span>
+                <marquee class="text-danger" behavior="alternate" scrollamount="1">40 OVER 120 RUN PASS</marquee>
+                <button type="button" class="live-tv-btn btn btn-primary">
+                    <box-icon color="#fff" name="tv">
+                        <div id="icon" style="fill: rgb(255, 255, 255);"><svg xmlns="http://www.w3.org/2000/svg"
+                                width="24" height="24">
+                                <path
+                                    d="M20 6h-5.586l2.293-2.293-1.414-1.414L12 5.586 8.707 2.293 7.293 3.707 9.586 6H4c-1.103 0-2 .897-2 2v11c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V8c0-1.103-.897-2-2-2zM4 19V8h16l.002 11H4z">
+                                </path>
+                            </svg></div>
+                    </box-icon>
+                </button>
+            </div>
+            <div class="scoreboard">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6">N DICKWELLA (36)</div>
+                        <div class="col-6">SRI 153/6 (45.5)</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">R MENDIS (8)*</div>
+                        <div class="col-6">AUSTRALIA 0/0 (0)</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">N LYON</div>
+                        <div class="col-6"><span
+                                class="last-over"><span>0</span><span>1</span><span>0</span><span>0</span><span>4</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my-3 container">
+                <div class="inplay-match-bets-header border-0">
+                    <div class="teamname">Team: MAX 100000/- </div>
+                    <div class="text-center">Lagai</div>
+                    <div class="text-center">Khai</div>
+                    <div class="text-center">Position</div>
+                </div>
+                <div class="inplay-match-bets">
+                    <div class="inplay-match-bet">
+                        <div class="teamname">AUSTRALIA</div>
+                        <div class="lgaai">
+                            <button type="button" name="top_lagai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"> <%= top_lagai %>
+                            </button>
+                        </div>
+                        <div class="khaai">
+                            <button type="button" name="top_khai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"> <%= top_khai %>
+                            </button>
+                                </div>
+                        <div class="d-flex align-items-center justify-content-center"><b name="top_pos" class="text-danger"> <%= top_pos %>
+                        </b>
+                        </div>
+                    </div>
+                    <div class="inplay-match-bet">
+                        <div class="teamname">SRI LANKA</div>
+                        <div class="lgaai">
+                            <button type="button" name="bottom_lagai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"><%= bottom_lagai %></button>
+                        </div>
+                        <div class="khaai">
+                            <button type="button" name="bottom_khai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"><%= bottom_khai %></button>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center"><b name="bottom_pos" class="text-danger"><%= bottom_pos %></b>
+                        </div>
+                    </div>
+                    <div class="inplay-match-bet">
+                        <div class="teamname">THE DRAW</div>
+                        <div class="lgaai">
+                            <button type="button" name="draw_lagai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"><%= draw_lagai %></button>
+                        </div>
+                        <div class="khaai">
+                            <button type="button" name="draw_khai" class="w-100 box-shadow-0 btn btn-transparent" data-toggle="modal" data-target="#myModal"><%= draw_khai %></button>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center"><b class="text-primary"><%= draw_pos%></b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scoreboard">
+                <div class="container">
+                    <div class="row">
+                        <div class="d-flex justify-content-between col">
+                            <p class="m-0">Session Plus / Minus</p><span class="text-white">0/-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="inplay-match-bets-header inplay-session-bet border-0">
+                    <div class="teamname">Session</div>
+                    <div class="d-flex align-items-center justify-content-center">No</div>
+                    <div class="d-flex align-items-center justify-content-center">Yes</div>
+                </div>
+                <div class="inplay-match-bets">
+                    <div class="inplay-match-bet inplay-session-bet">
+                        <div class="teamname">
+                            <p class="m-0">50 OVER RUN SL</p>
+                            <p class="m-0">Max: 100000</p>
+                        </div>
+                        <div class="khaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                170 <span>1.00</span>
+                        </div>
+
+                        <div class="lgaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                171 <span>1.00</span>
+                        </div>
+                    </div>
+                    <div class="inplay-match-bet inplay-session-bet">
+                        <div class="teamname">
+                            <p class="m-0">7TH WKT SL</p>
+                            <p class="m-0">Max: 50000</p>
+                        </div>
+                        <div class="khaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                173 <span>1.00</span>
+                        </div>
+
+                        <div class="lgaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                173<span>0,8</span>
+                        </div>
+
+                    </div>
+                    <div class="inplay-match-bet inplay-session-bet">
+                        <div class="teamname">
+                            <p class="m-0">N DICKWELLA RUN</p>
+                            <p class="m-0">Max: 50000</p>
+                        </div>
+                        <div class="khaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                158<span>1.1</span>
+                        </div>
+
+                        <div class="lgaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                158 <span>0.9</span>
+                        </div>
+
+
+                    </div>
+
+                    <div class="inplay-match-bet inplay-session-bet">
+                        <div class="teamname">
+                            <p class="m-0">R MENDIS BOUNDARIES</p>
+                            <p class="m-0">Max: 25000</p>
+                        </div>
+                        <div class="khaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                173 <span>1.00</span>
+                        </div>
+
+                        <div class="lgaai"><button type="button" class="w-100 box-shadow-0 btn btn-transparent"
+                                data-toggle="modal" data-target="#myModal">
+                                173<span>0,8</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <nav class="navbar">
+        <div class="navbar-wrapper">
+            <ul class="mob-navbar">
+                <li><a href="/home"><i class="fa fa-home" style="font-size:15px"></i><span
+                            style="font-size: 8px;">Dashboard</span>
+                    </a></li>
+                <li><a href="/home">
+                        <i class="fa fa-play" aria-hidden="true" style="font-size:15px"></i><span
+                            style="font-size: 8px;">In
+                            Play</span>
+                    </a></li>
+                <li><a href="/Ledgers">
+                        <i class="fa fa-dashboard" style="font-size:15px"></i></box-icon><span
+                            style="font-size: 8px;">My
+                            Ledger</span>
+                    </a></li>
+                <li><a href="/completed">
+                        <i class="fa fa-edit" style="font-size:15px"></i><span style="font-size: 8px;">Complete</span>
+                    </a></li>
+                <li><a href="/profile">
+                        <i class="nav-icon fas fa-user" style="font-size:15px"></i>
+                        <span style="font-size: 8px;">Profile</span>
+                    </a></li>
+                <li> <a href="/user/logout">
+                        <i class="fa fa-sign-out" aria-hidden="true" style="font-size:22px"></i><span
+                            style="font-size: 8px;">Logout</span>
+                    </a></li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+    </div>
+
+    
+        <div class="container">
+            <!-- The Modal -->
+
+            <div class="modal fade" id="myModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div role="dialog" aria-modal="true" class="fade bet-modal modal show" tabindex="-1"
+                            aria-labelledby="contained-modal-title-vcenter" style="display: block;">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    </div>
+                                    <div class="modal-body"></div>
+                                    <form method="POST" action="/createbid">
+                                        <div class="container">
+                                        <div class="bet-strip row">
+                                            <div class="col-6"><label>Session</label>
+                                                <p>15 OVER RUN IND W</p>
+                                            </div>
+                                            <div class="col-3"><label>Rate</label>
+                                                <input class="form-control" type="text" name="rate" placeholder="RATE"
+                                                    value="0.63" >
+                                            </div>
+                                            <div class="col-3"><label>Mode</label>
+                                                <input class="form-control" type="text" name="mode" placeholder="MODE"
+                                                    value="L">
+                                            </div>
+                                            <div class="invisible" class="col-3"><label>MatchID</label>
+                                                <input class="form-control" type="number" name="matchid" value="1">
+                                            </div>
+                                            <div class="invisible" class="col-3"><label>State</label>
+                                                <input class="form-control" type="" name="state" value="top">
+                                            </div>
+                                        </div>
+
+                                        <div class="my-3 row">
+
+                                            <div class="bet-price-btns col-lg-12 col-md-12 col-sm--12 col-12">
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="500" onclick="myFunction('500')">500</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="1000" onclick="myFunction('1000')">1k</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="2000" onclick="myFunction('2000')">2k</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="5000" onclick="myFunction('5000')">5k</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="10000" onclick="myFunction('10000')">10k</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="20000" onclick="myFunction('20000')">20k</button>
+                                                <button type="button" class="bet-price-btn btn btn-primary"
+                                                    class="form-control" id="exampleInputid1 50000"
+                                                    onclick="myFunction('50000')">50k</button>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div id="totalValue">
+                                                        <div class="mb-3 input-group">
+                                                            <input placeholder="Amount" type="text" name="amount"
+                                                                value="" id="getValue" max="100000" class="form-control" required>
+                                                        </div>
+                                                        <button type="Submit"
+                                                            class="w-100 m-0 btn btn-primary">Placebet</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <script>
+        $(document).ready(function(){
+            $("button[name='top_lagai']").on("click", function(){
+                $("input[name='rate']").val(<%= top_lagai %>);
+                $("input[name='mode']").val('L');
+                $("input[name='state']").val('top');
+                console.log("top lagai was pressed");
+            });
+            $("button[name='top_khai']").on("click", function(){
+                $("input[name='rate']").val(<%=top_khai%>);
+                $("input[name='mode']").val('K');
+                $("input[name='state']").val('top');
+                console.log("top khai was pressed");
+            });
+            $("button[name='bottom_lagai']").on("click", function(){
+                $("input[name='rate']").val(<%= bottom_lagai%>);
+                $("input[name='mode']").val('L');
+                $("input[name='state']").val('bottom');
+                console.log("bottom lagai was pressed");
+            });
+            $("button[name='bottom_khai']").on("click", function(){
+                $("input[name='rate']").val(<%= bottom_khai%>);
+                $("input[name='mode']").val('K');
+                $("input[name='state']").val('bottom');
+                console.log("bottom khai was pressed");
+            });
+            
+            $("b[name='top_pos']").change(function(){
+                console.log("top position was changed");
+            });
+            
+            $("b[name='bottom_pos']").change(function(){
+               console.log("bottom position was changed.");
+            });
+        });
+        
+        
+        // var amount=0;
+        function myFunction(value) {
+            amount=value;
+            console.log("data value", amount);
+            document.getElementById("getValue").value = value;
+        }
+        
+    </script>
+
+</body>
