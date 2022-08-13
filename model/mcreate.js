@@ -25,6 +25,10 @@ const matchSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+  date_time:{
+        type: Date,
+        required:true
+    },
 });
 matchSchema.set('timestamps', true);
 module.exports = mongoose.model('mcreate',matchSchema);
