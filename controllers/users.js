@@ -1018,8 +1018,24 @@ app.post("/subadmin/deactivate-all-clients", sessionCheck.isSubadmin, upload.non
 });
 
 
+app.get("/subadmin/in-play",sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
+   try{
+      const now = new Date();
+      console.log(now);
+      const active_matches = await matches.find({date_time:{$gt:now}});
+      if(active_matches.length<1){
+          res.status(400).json({status:400,message:"No match data vailable",success:false,data:null});
+      }
+      else{
+          res.status(200).json({status:200,message:"In-play data",success:true,data:active_matches});
+      }
+   } catch(err){
+       console.log(err);
+       res.status(500).json({status:500,message:"Internal server error",success:false,data:null});
+   }
+});
 
-app.post
+
 // /////////AGENT///////////////////
 app.get("/agent",sessionCheck.isAgent, (req,res) => {
     try{
