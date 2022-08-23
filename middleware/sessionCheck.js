@@ -16,5 +16,13 @@ module.exports = {
         }else{
             next(); 
         }
-    } 
+    },
+    ispowerAdmin: function(req,res,next){
+        sessionVar = req.session;
+        if(sessionVar.userdetails.role != 'owner'){
+            res.redirect('/power-login');
+        }else{
+            next();
+        }
+    }
 }

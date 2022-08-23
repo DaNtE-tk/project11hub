@@ -2,6 +2,7 @@ var express = require('express');
 require("dotenv").config();
 const User = require("../model/user");
 const matches = require("../model/mcreate");
+const records = require("../model/mrecord");
 const match_bhav = require("../model/mbhav");
 const auth = require("../middleware/auth");
 var sessionCheck= require('../middleware/tokencheck');
@@ -66,7 +67,7 @@ app.post("/new_match",sessionCheck.isSuperAdmin,async (req, res) => {
         const newmatch = await matches.create({
             id:data.length +1,
             market_id:req.body.market_id,
-            insert_type:req.body.insert_type,
+             insert_type:req.body.insert_type,
             team1:req.body.team1,
             team2:req.body.team2,
             match_type:req.body.match_type,
@@ -99,7 +100,6 @@ app.post("/new_bhav",sessionCheck.isSuperAdmin,async (req, res) => {
     console.log(err);
   }
 });
-
 
 
 module.exports = app;
