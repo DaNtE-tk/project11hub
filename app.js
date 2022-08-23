@@ -12,17 +12,15 @@ mongoose.connect(url, {
     useNewUrlParser: true,
 });
 const con= mongoose.connection;
+
 con.on('open', ()=> {
   console.log('Database Connected');
 });
 
 var usersRouter = require('./controllers/users');
 var adminRouter = require('./controllers/admin');
-// var coadminRouter = require('./controllers/coadmin');
-// var subadminRouter = require('./controllers/subadmin');
-// var agentRouter = require('./controllers/agent');
-// var superagentRouter = require('./controllers/superagent');
-// var masterRouter = require('./controllers/master');
+var ownersRouter = require('./controllers/owners');
+var clientsRouter = require('./controllers/clients');
 
 var app = express();
 var sessionVar;
@@ -48,7 +46,17 @@ app.use('/admin',function(req, res, next){
         }else{
             next(); 
         }
-    }); 
+    });
+    
+// app.use('/power', function(req,res,next){
+//     sessionVar = req.session;
+//     if(sessionVar.userdetails.role!='owner'){
+//         res.redirect('/power-login');
+//     }
+//     else{
+//         next();
+//     }
+// })
     
 // app.use('/coadmin', function(req,res,next){
 //     sessionVar=req.session;
@@ -99,15 +107,13 @@ app.use('/admin',function(req, res, next){
 
 
 app.use('/', usersRouter);
+
 app.use('/admin-login', adminRouter);
 app.use('/admin', adminRouter);
-// app.use('/coadmin-login',coadminRouter);
-// app.use('/Subadmin',subadminRouter);
-// app.use('/Subadmin-login',subadminRouter);
-// app.use('/Agent',agentRouter);
-// app.use('/Agent-login',agentRouter);
-// app.use('/Superagent-login',superagentRouter);
-// app.use('/Master-login',masterRouter);
+
+app.use('/owner',ownersRouter);
+
+app.use('/game',clientsRouter);
 
 
 app.use(function(req, res, next) {

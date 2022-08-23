@@ -61,7 +61,7 @@ module.exports = {
             next(); 
         }
     },
-     isCoadmin: function(req, res, next){
+     isClient: function(req, res, next){
          const token =
         req.body.token || req.query.token || req.headers["x-access-token"];
           if (!token) {
@@ -69,7 +69,7 @@ module.exports = {
   }
        const decoded = jwt.verify(token, config.TOKEN_KEY);
     req.user = decoded;
-        if(req.user.role != 'Coadmin'){
+        if(req.user.role != 'client'){
            return res.status(401).send("Invalid Token");
         }else{
             next(); 
@@ -102,5 +102,19 @@ module.exports = {
         }else{
             next(); 
         }
-    } 
+    },
+    isOwner: function(req,res,next){
+        const token =
+        req.body.token || req.query.token || req.headers["x-access-token"];
+          if (!token) {
+    return res.status(403).send("A token is required for authentication");
+  }
+    const decoded = jwt.verify(token, config.TOKEN_KEY);
+    req.user = decoded;
+        if(req.user.role != 'owner'){
+            res.redirect('/power-login');
+        }else{
+            next();
+        }
+    }
 }
