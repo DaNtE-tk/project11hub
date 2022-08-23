@@ -2,7 +2,9 @@ var express = require('express');
 require("dotenv").config();
 const User = require("../model/user");
 const Bid = require("../model/bid");
-const matches = require("../model/mcreate");
+const Match = require("../model/mcreate");
+const records = require("../model/mrecord");
+const Owner = require("../model/owner");
 const auth = require("../middleware/auth");
 var sessionCheck= require('../middleware/tokencheck');
 const app = express();
@@ -23,9 +25,9 @@ cb(null, Date.now() + file.originalname);
 var upload = multer({storage:storage}); 
 const fs = require('fs');
 
-
 app.use(function(req, res, next) {
   res.locals.user = req.session.userdetail;
+  console.log(req.session.userdetail);
   next();
 });
 
@@ -42,13 +44,13 @@ app.post("/register",upload.none(), async (req, res, next) => {
         console.log(oldUser);
       return res.status(409).json({status:409, message:"User Already Exist. Please Login", success:false, data:oldUser});
     }
-    encryptedPassword = await bcrypt.hash(password, 10);
+    
     const user = await User.create({
       first_name,
       last_name,
       role,
       email: email.toLowerCase(),
-      password: encryptedPassword,
+      password: password,
      
     });
     const token = jwt.sign(
@@ -59,7 +61,7 @@ app.post("/register",upload.none(), async (req, res, next) => {
       }
     );
     user.token = token;
-    return res.status(409).json({status:201, message:"User creation successful", success:true, data:user});
+    return res.status(201).json({status:201, message:"User creation successful", success:true, data:user});
   } catch (err) {
     console.log(err);
   }
@@ -77,7 +79,6 @@ app.post("/login",upload.none(), async (req, res) => {
     if(!user){
        return  res.status(400).send("Invalid Credentials"); 
     }
-    if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
         { user_id: user._id, uid:user.uid, role:user.role },
         process.env.TOKEN_KEY,
@@ -87,21 +88,10 @@ app.post("/login",upload.none(), async (req, res) => {
       );
       user.token = token;
       res.status(200).json(user);
-    }
   } catch (err) {
     console.log(err);
   }
 });
-
-// /////////CO-ADMIN/////////////////
-// app.get("/coadmin",sessionCheck.isCoadmin, (req,res)=>{
-//   try{
-//       var user = 'COADMIN LOGGED-IN';
-//       res.status(200).json(user);
-//   } catch(err){
-//       res.status(400).json(err);
-//   }
-// });
 
 // ///// UID CREATION FUNCTION ///////////
 function uidcreate(level,count){
@@ -173,7 +163,6 @@ app.post("/subadmin/master-create",sessionCheck.isSubadmin, upload.none(), async
         console.log(oldUser);
       return res.status(409).json({status:409, message:"User Already Exist. Please Login", success:false, data:oldUser});
     }
-    // encryptedPassword = await bcrypt.hash(password,10);
     
     const uid = uidcreate(role,count+1);
     count+=1;
@@ -224,7 +213,6 @@ app.post("/subadmin/master-create",sessionCheck.isSubadmin, upload.none(), async
      res.status(500).json({staus:500,message:'Internal server error',success:false, data:err});
    };
 });
-
 
 app.get("/subadmin/my-masters/", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
@@ -287,6 +275,7 @@ app.post("/subadmin/detail-master",sessionCheck.isSubadmin, upload.none(), async
       res.status(500).json({status:500,message:"Internal server error",success:false,data:null});
    }
 });
+
 app.post("/subadmin/edit-master",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
        const uid = req.body.uid;
@@ -1017,22 +1006,32 @@ app.post("/subadmin/deactivate-all-clients", sessionCheck.isSubadmin, upload.non
     }
 });
 
-
 app.get("/subadmin/in-play",sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
    try{
-      const now = new Date();
-      console.log(now);
-      const active_matches = await matches.find({date_time:{$gt:now}});
-      if(active_matches.length<1){
+      const matches = await Match.find({status:"active"});
+      if(matches.length<1){
           res.status(400).json({status:400,message:"No match data vailable",success:false,data:null});
       }
       else{
-          res.status(200).json({status:200,message:"In-play data",success:true,data:active_matches});
+          res.status(200).json({status:200,message:"In-play data",success:true,data:matches});
       }
    } catch(err){
        console.log(err);
        res.status(500).json({status:500,message:"Internal server error",success:false,data:null});
    }
+});
+
+app.get("/subadmin/complete-game",sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
+    try{
+        const owner_uid = req.user.uid;
+        console.log(owner_uid);
+        const match_data = await matches.find({})
+        console.log(match_data);
+        
+    }catch(err){
+        console.log(err);
+        res.status(500).json({status:500,message:"Internal server error",success:false,data:null});
+    }
 });
 
 
@@ -1123,7 +1122,7 @@ var toppos=0;
 var botpos=0;
 
 
- function bet(rate, amount,mode,state){
+function bet(rate, amount,mode,state){
      amount = parseInt(amount);
        if(state=='top'){
             if(mode=='L'||mode=='l'){
@@ -1149,25 +1148,25 @@ var botpos=0;
     // temptoppos.toFixed(2);
     };
 
-app.post("/createbid",sessionCheck.isAuth,upload.none(), async (req, res) => {
-    try {
-     var { rate, amount, mode, state } = req.body;
-        if(!(rate, amount && mode && state)){
-     return res.status(400).send("All input is required");
-    }
-    rate = parseFloat(rate);
-    amount = parseInt(amount);
-    var result = bet(rate, amount, mode, state);
+// app.post("/createbid",sessionCheck.isAuth,upload.none(), async (req, res) => {
+//     try {
+//      var { rate, amount, mode, state } = req.body;
+//         if(!(rate, amount && mode && state)){
+//      return res.status(400).send("All input is required");
+//     }
+//     rate = parseFloat(rate);
+//     amount = parseInt(amount);
+//     var result = bet(rate, amount, mode, state);
     
-    // res.redirect('/session');
+//     // res.redirect('/session');
         
-          const data = [result[0], result[1]] ;
-          res.send({rate:rate, amount:amount,top_position:result[0],bottom_position:result[1]});
-        //   res.status(200).json(data);
-     }catch(err){
-         res.status(400).json(err);
-     }
-});
+//           const data = [result[0], result[1]] ;
+//           res.send({rate:rate, amount:amount,top_position:result[0],bottom_position:result[1]});
+//         //   res.status(200).json(data);
+//      }catch(err){
+//          res.status(400).json(err);
+//      }
+// });
 
 // ////LOGOUT//////
 app.get('/logout',(req,res) => {
