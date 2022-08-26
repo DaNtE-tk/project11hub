@@ -33,6 +33,7 @@ app.use(function(req, res, next) {
 });
 
 
+// api for client login
 app.post("/login", upload.none(), async (req,res)=>{
    try{
        const {uid,password} = req.body;
@@ -59,6 +60,8 @@ app.post("/login", upload.none(), async (req,res)=>{
    }
 });
 
+
+// returns a list of all matches in-play
 app.get("/in-play",sessionCheck.isClient, upload.none(), async(req,res)=>{
    try{
        const matches = await Match.find({status:"active"});
@@ -74,7 +77,9 @@ app.get("/in-play",sessionCheck.isClient, upload.none(), async(req,res)=>{
    }
 });
 
+
 // MATCH SECTION
+// returns details about a particular match
 app.get('/match', sessionCheck.isClient, upload.none(), async (req,res)=>{
    try{
        const match_id = req.body.match_id;
@@ -95,7 +100,7 @@ var rate=0.00;
 var toppos=0;
 var botpos=0;
 
-
+// function which does calculation when a bid is placed
 function bid(rate, amount,mode,state){
      amount = parseInt(amount);
        if(state=='top'){
@@ -121,6 +126,8 @@ function bid(rate, amount,mode,state){
         return [toppos.toFixed(0), botpos.toFixed(0)];
 };
 
+
+// api for placing a match bet
 app.post("/match-bid",sessionCheck.isClient ,upload.none(), async (req, res) => {
     try {
      var { market_id, rate, amount, mode, state } = req.body;
@@ -156,6 +163,8 @@ app.post("/match-bid",sessionCheck.isClient ,upload.none(), async (req, res) => 
      }
 });
 
+
+// api for placing a session bet
 app.post("/session-bid",sessionCheck.isClient,upload.none(), async (req,res)=>{
    try{
        var {market_id,session_id,amount} = req.body;
@@ -183,6 +192,7 @@ app.post("/session-bid",sessionCheck.isClient,upload.none(), async (req,res)=>{
    }
 });
 
+//  returns a list of all bets placed by a client on a particular match
 app.get("/bets",sessionCheck.isClient,upload.none(), async(req,res)=>{
    try{
        const {market_id} = req.body;
@@ -199,6 +209,8 @@ app.get("/bets",sessionCheck.isClient,upload.none(), async(req,res)=>{
    }
 });
 
+
+//  returns a list of all match bets placed for a particular match
 app.get("/match-bets",sessionCheck.isClient,upload.none(),async(req,res)=>{
    try{
        const {market_id} = req.body;
@@ -220,6 +232,7 @@ app.get("/match-bets",sessionCheck.isClient,upload.none(),async(req,res)=>{
    }
 });
 
+//  returns a list of all session bets assigned to a particular match
 app.get("/session-bets",sessionCheck.isClient,upload.none(),async(req,res)=>{
    try{
        const {market_id} = req.body;
@@ -242,6 +255,7 @@ app.get("/session-bets",sessionCheck.isClient,upload.none(),async(req,res)=>{
 });
 
 // PROFILE SECTION
+// returns details about a client account 
 app.get("/profile",sessionCheck.isClient,upload.none(), async (req,res)=>{
    try{
        const uid = req.user.uid;
@@ -257,6 +271,8 @@ app.get("/profile",sessionCheck.isClient,upload.none(), async (req,res)=>{
    }
 });
 
+
+// complete match section
 app.get("/complete-matches",sessionCheck.isClient,upload.none(),async (req,res)=>{
    try{
        const client_uid = req.user.uid;
@@ -273,6 +289,8 @@ app.get("/complete-matches",sessionCheck.isClient,upload.none(),async (req,res)=
    }
 });
 
+
+// api to change password of a client account
 app.post("/change-password",sessionCheck.isClient, upload.none(), async (req,res)=>{
    try{
        const uid = req.user.uid;
@@ -313,8 +331,8 @@ app.get("/ledger",sessionCheck.isClient, upload.none(), async (req,res)=>{
     //   });
       const total_credit = 0;
       const total_debit = 0;
-      const balance = total_credit+total_debit;
-      console.log(client);
+      const balance = client.wallet-(total_credit+total_debit);
+      console.log(balance);
        
        
        const data = await Ledger.find({client_uid}).sort({id:-1});

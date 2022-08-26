@@ -4,6 +4,7 @@ const User = require("../model/user");
 const Bid = require("../model/bid");
 const Match = require("../model/mcreate");
 const records = require("../model/mrecord");
+const subLedger = require("../model/subadmin_ledger");
 const Owner = require("../model/owner");
 const auth = require("../middleware/auth");
 var sessionCheck= require('../middleware/tokencheck');
@@ -41,7 +42,6 @@ app.post("/register",upload.none(), async (req, res, next) => {
     }
     const oldUser = await User.findOne({ email });
     if (oldUser) {
-        console.log(oldUser);
       return res.status(409).json({status:409, message:"User Already Exist. Please Login", success:false, data:oldUser});
     }
     
@@ -67,7 +67,7 @@ app.post("/register",upload.none(), async (req, res, next) => {
   }
 });
 
-// /////USER LOGIN/////////
+// /////USER LOGIN (all users can login from this login panel)/////////
 app.post("/login",upload.none(), async (req, res) => {
   try {
     const {uid,password} = req.body;
@@ -75,7 +75,6 @@ app.post("/login",upload.none(), async (req, res) => {
      return res.status(400).send("All input is required");
     }
     const user = await User.findOne({uid:uid,status:"active"});
-    console.log(user);
     if(!user){
        return  res.status(400).send("Invalid Credentials"); 
     }
@@ -118,7 +117,7 @@ function uidcreate(level,count){
     return uid;
 };
 
-// ///////SUB-ADMIN///////////////////
+// ///////SUB-ADMIN section///////////////////
 app.get("/subadmin",sessionCheck.isSubadmin,upload.none(), async (req,res)=>{
     try{
        res.status(200).json({status:200, message:'SUBADMIN LOGGED-IN',success:true});
@@ -128,7 +127,7 @@ app.get("/subadmin",sessionCheck.isSubadmin,upload.none(), async (req,res)=>{
    }
 });
 
-
+// downline - returns list of all the users created by a particular subadmin /////////
 app.post("/subadmin/subadmin-downline",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
     owner_uid = req.user.uid;
@@ -147,6 +146,7 @@ app.post("/subadmin/subadmin-downline",sessionCheck.isSubadmin, upload.none(), a
     }
 });
 
+// subadmin section api to create new masters
 app.post("/subadmin/master-create",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        let count = await User.estimatedDocumentCount();
@@ -160,7 +160,6 @@ app.post("/subadmin/master-create",sessionCheck.isSubadmin, upload.none(), async
 
     const oldUser = await User.findOne({ email });
     if (oldUser) {
-        console.log(oldUser);
       return res.status(409).json({status:409, message:"User Already Exist. Please Login", success:false, data:oldUser});
     }
     
@@ -214,6 +213,7 @@ app.post("/subadmin/master-create",sessionCheck.isSubadmin, upload.none(), async
    };
 });
 
+// returns list to all masters created by a particular subadmin (active and inactive included)
 app.get("/subadmin/my-masters/", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -230,6 +230,7 @@ app.get("/subadmin/my-masters/", sessionCheck.isSubadmin, upload.none(), async (
     }
 });
 
+// returns list of all the superagents creted by masters which themselves are crated by a particular subadmin
 app.post("/subadmin/master-downline",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
      owner_uid = req.user.uid;
@@ -249,6 +250,8 @@ app.post("/subadmin/master-downline",sessionCheck.isSubadmin, upload.none(), asy
     }
 });
 
+
+// returns list of all active master created by a particular subadmin 
 app.get("/subadmin/master-active/", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -265,6 +268,8 @@ app.get("/subadmin/master-active/", sessionCheck.isSubadmin, upload.none(), asyn
     }
 });
 
+
+// return details about a master when it's uid is provided
 app.post("/subadmin/detail-master",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
         const uid = req.body.uid;
@@ -276,6 +281,7 @@ app.post("/subadmin/detail-master",sessionCheck.isSubadmin, upload.none(), async
    }
 });
 
+// api to edit details of partiular master
 app.post("/subadmin/edit-master",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
        const uid = req.body.uid;
@@ -307,6 +313,7 @@ app.post("/subadmin/edit-master",sessionCheck.isSubadmin, upload.none(), async(r
    }
 });
 
+// api to activate a master account
 app.post("/subadmin/activate-master", sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
     try{
         const {uid} = req.body;
@@ -319,6 +326,7 @@ app.post("/subadmin/activate-master", sessionCheck.isSubadmin,upload.none(),asyn
     }
 });
 
+// api to change the limit of a master account
 app.post("/subadmin/change-master-limit", sessionCheck.isSubadmin, upload.none(),async(req,res)=>{
    try{
        const {uid,limit} = req.body;
@@ -331,6 +339,7 @@ app.post("/subadmin/change-master-limit", sessionCheck.isSubadmin, upload.none()
    }
 });
 
+// api to deactivate a master account
 app.post("/subadmin/deactivate-master/", sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
     try{
         const {uid} = req.body;
@@ -343,6 +352,7 @@ app.post("/subadmin/deactivate-master/", sessionCheck.isSubadmin, upload.none(),
     }
 });
 
+// api to deactivate all masters account created by this subadmin
 app.post("/subadmin/deactivate-all-master", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         await User.updateMany({role:"master", createdBy:req.user.uid}, {$set:{status:"inactive"}}).exec();
@@ -355,6 +365,7 @@ app.post("/subadmin/deactivate-all-master", sessionCheck.isSubadmin, upload.none
 });
 
 
+// api to create a new superagent account
 app.post("/subadmin/super-agent-create",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        let count = await User.estimatedDocumentCount();
@@ -426,6 +437,8 @@ app.post("/subadmin/super-agent-create",sessionCheck.isSubadmin, upload.none(), 
    };
 });
 
+
+// returns list of all superagents created by this subadmin (active and inactive included)
 app.get("/subadmin/my-superagents",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -440,7 +453,7 @@ app.get("/subadmin/my-superagents",sessionCheck.isSubadmin, upload.none(), async
     }
 });
 
-
+// return list of all active superagent created by a subadmin
 app.get("/subadmin/all-active-superagents",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -458,7 +471,7 @@ app.get("/subadmin/all-active-superagents",sessionCheck.isSubadmin, upload.none(
     }
 });
 
-
+//  return a list of all agents created by superagents which themselves are created by this subadmin
 app.post("/subadmin/superagent-downline",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
     owner_uid = req.user.uid;
@@ -478,6 +491,7 @@ app.post("/subadmin/superagent-downline",sessionCheck.isSubadmin, upload.none(),
     }
 });
 
+// return details of a supergent agent account when uid is provided
 app.post("/subadmin/detail-superagent",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -495,6 +509,7 @@ app.post("/subadmin/detail-superagent",sessionCheck.isSubadmin, upload.none(), a
     }
 });
 
+// api to edit informations of an existing superagent account
 app.post("/subadmin/edit-superagent",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
        const uid = req.body.uid;
@@ -527,6 +542,7 @@ app.post("/subadmin/edit-superagent",sessionCheck.isSubadmin, upload.none(), asy
 });
 
 
+//  acitvate an inactive superagent account
 app.post("/subadmin/activate-superagent", sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -539,6 +555,7 @@ app.post("/subadmin/activate-superagent", sessionCheck.isSubadmin,upload.none(),
     }
 });
 
+// changes the limit of a superagent account
 app.post("/subadmin/change-superagent-limit", sessionCheck.isSubadmin, upload.none(),async(req,res)=>{
    try{
        const {uid,limit} = req.body;
@@ -552,6 +569,7 @@ app.post("/subadmin/change-superagent-limit", sessionCheck.isSubadmin, upload.no
 });
 
 
+//  deactivates a superagent account
 app.post("/subadmin/deactivate-superagent/", sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -565,6 +583,7 @@ app.post("/subadmin/deactivate-superagent/", sessionCheck.isSubadmin, upload.non
 });
 
 
+//  deactivates all superagent created by this subadmin
 app.post("/subadmin/deactivate-all-superagents", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         await User.updateMany({role:"superagent", createdBy:req.user.uid}, {$set:{status:"inactive"}}).exec();
@@ -576,6 +595,8 @@ app.post("/subadmin/deactivate-all-superagents", sessionCheck.isSubadmin, upload
     }
 });
 
+
+// api to create a new agent
 app.post("/subadmin/agent-create", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        let count = await User.estimatedDocumentCount();
@@ -648,6 +669,8 @@ app.post("/subadmin/agent-create", sessionCheck.isSubadmin, upload.none(), async
    }
 });
 
+
+// returns a list of all agents creted by this subadmin (active and inactive included)
 app.get("/subadmin/my-agents",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        const owner_uid = req.user.uid;
@@ -665,6 +688,7 @@ app.get("/subadmin/my-agents",sessionCheck.isSubadmin, upload.none(), async (req
 });
 
 
+// returns a list of all active agents created by this subadmin
 app.get("/subadmin/all-active-agents",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -682,7 +706,7 @@ app.get("/subadmin/all-active-agents",sessionCheck.isSubadmin, upload.none(), as
     }
 });
 
-
+// returns a list of all clients created by agents which themselves are created by a subadmin
 app.post("/subadmin/agent-downline",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
     owner_uid = req.user.uid;
@@ -702,6 +726,7 @@ app.post("/subadmin/agent-downline",sessionCheck.isSubadmin, upload.none(), asyn
     }
 });
 
+// returns details about an agent account
 app.post("/subadmin/detail-agent",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -719,6 +744,7 @@ app.post("/subadmin/detail-agent",sessionCheck.isSubadmin, upload.none(), async 
     }
 });
 
+//  api to edit information of an agent account
 app.post("/subadmin/edit-agent",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
        const uid = req.body.uid;
@@ -750,7 +776,7 @@ app.post("/subadmin/edit-agent",sessionCheck.isSubadmin, upload.none(), async(re
    }
 });
 
-
+//  api to active an inactive agent 
 app.post("/subadmin/activate-agent", sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -763,6 +789,8 @@ app.post("/subadmin/activate-agent", sessionCheck.isSubadmin,upload.none(),async
     }
 });
 
+
+//  api to change limit of an agent
 app.post("/subadmin/change-agent-limit", sessionCheck.isSubadmin, upload.none(),async(req,res)=>{
    try{
        const {uid,limit} = req.body;
@@ -776,6 +804,7 @@ app.post("/subadmin/change-agent-limit", sessionCheck.isSubadmin, upload.none(),
 });
 
 
+// api to deactivate an agent
 app.post("/subadmin/deactivate-agent/", sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -789,6 +818,7 @@ app.post("/subadmin/deactivate-agent/", sessionCheck.isSubadmin, upload.none(),a
 });
 
 
+//  api to deactive all agents created by this subadmin
 app.post("/subadmin/deactivate-all-agents", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         await User.updateMany({role:"agent", createdBy:req.user.uid}, {$set:{status:"inactive"}}).exec();
@@ -800,7 +830,7 @@ app.post("/subadmin/deactivate-all-agents", sessionCheck.isSubadmin, upload.none
     }
 });
 
-
+// api to create a new client
 app.post("/subadmin/client-create", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        let count = await User.estimatedDocumentCount();
@@ -873,6 +903,8 @@ app.post("/subadmin/client-create", sessionCheck.isSubadmin, upload.none(), asyn
    }
 });
 
+
+//  returns a list of all clients created by this subadmin (active and inactive included)
 app.get("/subadmin/my-clients",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
    try{
        const owner_uid = req.user.uid;
@@ -888,6 +920,7 @@ app.get("/subadmin/my-clients",sessionCheck.isSubadmin, upload.none(), async (re
 });
 
 
+//  returns a list of all active clients under this subadmin
 app.get("/subadmin/all-active-clients",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -905,6 +938,7 @@ app.get("/subadmin/all-active-clients",sessionCheck.isSubadmin, upload.none(), a
 });
 
 
+// returns details about a client account when uid is provided
 app.post("/subadmin/detail-client",sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -925,6 +959,7 @@ app.post("/subadmin/detail-client",sessionCheck.isSubadmin, upload.none(), async
     }
 });
 
+//  api to edit information about a client account
 app.post("/subadmin/edit-client",sessionCheck.isSubadmin, upload.none(), async(req,res) =>{
    try{
        const uid = req.body.uid;
@@ -956,7 +991,7 @@ app.post("/subadmin/edit-client",sessionCheck.isSubadmin, upload.none(), async(r
    }
 });
 
-
+//  api to active an inactive client account
 app.post("/subadmin/activate-client", sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -969,6 +1004,8 @@ app.post("/subadmin/activate-client", sessionCheck.isSubadmin,upload.none(),asyn
     }
 });
 
+
+//  api to change limit of a client account
 app.post("/subadmin/change-client-limit", sessionCheck.isSubadmin, upload.none(),async(req,res)=>{
    try{
        const {uid,limit} = req.body;
@@ -981,7 +1018,7 @@ app.post("/subadmin/change-client-limit", sessionCheck.isSubadmin, upload.none()
    }
 });
 
-
+// api to deactivate a client account 
 app.post("/subadmin/deactivate-client/", sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
     try{
         const uid = req.body.uid;
@@ -994,7 +1031,7 @@ app.post("/subadmin/deactivate-client/", sessionCheck.isSubadmin, upload.none(),
     }
 });
 
-
+// api to deactivate all client account unders this subadmin
 app.post("/subadmin/deactivate-all-clients", sessionCheck.isSubadmin, upload.none(), async (req,res)=>{
     try{
         await User.updateMany({role:"client", createdBy:req.user.uid}, {$set:{status:"inactive"}}).exec();
@@ -1006,6 +1043,7 @@ app.post("/subadmin/deactivate-all-clients", sessionCheck.isSubadmin, upload.non
     }
 });
 
+// return list of matches in play
 app.get("/subadmin/in-play",sessionCheck.isSubadmin,upload.none(),async (req,res)=>{
    try{
       const matches = await Match.find({status:"active"});
@@ -1021,6 +1059,7 @@ app.get("/subadmin/in-play",sessionCheck.isSubadmin,upload.none(),async (req,res
    }
 });
 
+//  returns list of complete games
 app.get("/subadmin/complete-game",sessionCheck.isSubadmin, upload.none(),async (req,res)=>{
     try{
         const owner_uid = req.user.uid;
@@ -1033,6 +1072,58 @@ app.get("/subadmin/complete-game",sessionCheck.isSubadmin, upload.none(),async (
         res.status(500).json({status:500,message:"Internal server error",success:false,data:null});
     }
 });
+
+//  api to insert a record in ledgers
+app.post("/subadmin/ledger-insert",sessionCheck.isSubadmin,upload.none(), async(req,res)=>{
+   try{
+       const {date,collection_name,debit,credit,payment_type,remark} = req.body;
+       if(!(date&&collection_name&&payment_type)){
+           res.status(400).json({status:400,message:"In-sufficient data",success:false,data:null});
+       }else{
+           const count = await subLedger.estimatedDocumentCount();
+           const id = count+1;
+           const subadmin_uid = req.user.uid;
+           const user = await User.findOne({uid:subadmin_uid});
+           const balance = user.wallet+(credit-debit);
+          const data = await subLedger.create({
+              id,
+              subadmin_uid,
+              date,
+              collection_name,
+              debit,
+              credit,
+              balance,
+              payment_type,
+              remark
+          })
+          res.status(201).json({status:201,message:"Ledger entry success",success:true,data:data});
+      }
+   } catch(err){
+       console.log(err);
+       res.status(500).json({status:500,message:"Internal server error",success:true,data:null});
+   }
+});
+
+//  return ledgers records
+app.get("/subadmin/my-ledger",sessionCheck.isSubadmin,upload.none(),async(req,res)=>{
+   try{
+       const data = await subLedger.find({subadmin_uid:req.user.uid});
+       if(data.length<1){
+           res.status(400).json({status:400,message:"No data found",success:false,data:null});
+       }
+       else{
+           res.status(200).json({status:200,message:"Ledger data for : "+req.user.uid,success:true,data:data});
+       }
+   } catch(err){
+       console.log(err);
+       res.status(500).json({status:500,message:"Internal server error",success:true,data:null});
+   }
+});
+
+
+
+
+
 
 
 // /////////AGENT///////////////////
