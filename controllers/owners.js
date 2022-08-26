@@ -32,6 +32,7 @@ app.use(function(req, res, next) {
 });
 
 
+//  api to create a new owner account 
 app.post("/register", upload.none(),async (req,res)=>{
     try{
         let count = await Owner.estimatedDocumentCount();
@@ -76,6 +77,7 @@ app.post("/register", upload.none(),async (req,res)=>{
     }
 });
 
+//  api for owner login
 app.post("/login",upload.none(), async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -102,6 +104,7 @@ app.post("/login",upload.none(), async (req, res) => {
   }
 });
 
+
 app.get("/welcome", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const data = await Owner.find({_id:req.user.owner_id});
@@ -113,6 +116,7 @@ app.get("/welcome", sessionCheck.isOwner, upload.none(), async (req,res)=>{
 });
 
 // DASHBOARD
+//  returns a list of all pending sessions
 app.get("/pending-sessions",sessionCheck.isOwner, upload.none(),async (req,res)=>{
    try{
        const psession = await Session.find({status:"pending"});
@@ -129,7 +133,7 @@ app.get("/pending-sessions",sessionCheck.isOwner, upload.none(),async (req,res)=
    }
 });
 
-
+//  returns a list of all complete matches 
 app.get("/complete-matches", sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({status:"complete"});
@@ -146,6 +150,8 @@ app.get("/complete-matches", sessionCheck.isOwner, upload.none(), async (req,res
    }
 });
 
+
+//  returns a list of all matches in-play
 app.get("/inplay-matches", sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({status:"active"});
@@ -163,6 +169,7 @@ app.get("/inplay-matches", sessionCheck.isOwner, upload.none(), async (req,res)=
 });
 
 
+//  retruns a list of all upcoming matches
 app.get("/upcoming-matches", sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({status:"inactive"});
@@ -179,6 +186,8 @@ app.get("/upcoming-matches", sessionCheck.isOwner, upload.none(), async (req,res
    }
 });
 
+
+//  returns a list of all client 
 app.get("/total-clients", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const clients = await User.find({role:"client"});
@@ -196,6 +205,8 @@ app.get("/total-clients", sessionCheck.isOwner, upload.none(), async (req,res)=>
     }
 });
 
+
+// returns a list of all agents 
 app.get("/total-agents", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const agents = await User.find({role:"agent"});
@@ -214,6 +225,7 @@ app.get("/total-agents", sessionCheck.isOwner, upload.none(), async (req,res)=>{
 });
 
 
+//  returns a list of all stokists/superagents
 app.get("/total-stokists", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const stokists = await User.find({role:"superagent"});
@@ -231,6 +243,8 @@ app.get("/total-stokists", sessionCheck.isOwner, upload.none(), async (req,res)=
     }
 });
 
+
+//  returns a list of all senior stokists/masters
 app.get("/total-seniorStokists", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const seniorStokists = await User.find({role:"master"});
@@ -248,6 +262,8 @@ app.get("/total-seniorStokists", sessionCheck.isOwner, upload.none(), async (req
     }
 });
 
+
+//  returns a list of all admins
 app.get("/total-admins", sessionCheck.isOwner, upload.none(), async (req,res)=>{
     try{
         const admins = await User.find({role:"admin"});
@@ -268,6 +284,7 @@ app.get("/total-admins", sessionCheck.isOwner, upload.none(), async (req,res)=>{
 
 // MANAGE CRICKET SECTION
 
+// api to create a new match
 app.post("/new_match",sessionCheck.isOwner,async (req, res) => {
     data = await Match.find().exec();
     try{
@@ -291,6 +308,7 @@ app.post("/new_match",sessionCheck.isOwner,async (req, res) => {
   }
 });
 
+//  returns details about a particular match when valid market_id is provided
 app.post("/detail-match",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const {market_id} = req.body;
@@ -312,6 +330,8 @@ app.post("/detail-match",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    }
 });
 
+
+//  returns a list of manual matches
 app.get("/manual-matches",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({insert_type:"manual"});
@@ -329,6 +349,7 @@ app.get("/manual-matches",sessionCheck.isOwner, upload.none(), async (req,res)=>
    }
 });
 
+//  returns a list of api matches
 app.get("/api-matches",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({insert_type:"api"});
@@ -345,6 +366,8 @@ app.get("/api-matches",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    }
 });
 
+
+//  returns a list of abandoned matches 
 app.get("/abandoned-matches", sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({status:"abandoned"});
@@ -362,6 +385,7 @@ app.get("/abandoned-matches", sessionCheck.isOwner, upload.none(), async (req,re
 });
 
 
+//  api to abandon a match
 app.post("/abandon-match",sessionCheck.isOwner,upload.none(), async (req,res)=>{
    try{
        const market_id = req.body.market_id;
@@ -377,6 +401,7 @@ app.post("/abandon-match",sessionCheck.isOwner,upload.none(), async (req,res)=>{
 });
 
 
+//  api to remove a match
 app.post("/remove-match",sessionCheck.isOwner,upload.none(), async (req,res)=>{
    try{
        const market_id = req.body.market_id;
@@ -391,6 +416,8 @@ app.post("/remove-match",sessionCheck.isOwner,upload.none(), async (req,res)=>{
    }
 });
 
+
+//  api to change a team name
 app.post("/change-team-name",sessionCheck.isOwner,upload.none(), async (req,res)=>{
    try{
        const {market_id, team1,team2} = req.body;
@@ -409,6 +436,8 @@ app.post("/change-team-name",sessionCheck.isOwner,upload.none(), async (req,res)
    }
 });
 
+
+// api to change setting of particular match
 app.post("/match-setting", sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const market_id = req.body.market_id;
@@ -436,6 +465,7 @@ app.post("/match-setting", sessionCheck.isOwner, upload.none(), async (req,res)=
    }
 });
 
+//  return a list of all matches with score_id
 app.get("/score-id",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const matches = await Match.find({score_id:{$gt:1}});
@@ -452,6 +482,8 @@ app.get("/score-id",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    }
 });
 
+
+// api to post a notification to a match
 app.post("/notification",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        const {market_id,text} = req.body;
@@ -499,6 +531,7 @@ app.post("/match-bhav",sessionCheck.isOwner, upload.none(), async(req,res)=>{
    }
 });
 
+// api to create a session
 app.post("/create-session",sessionCheck.isOwner,upload.none(),async(req,res)=>{
    try{
        const {market_id,name} = req.body;
@@ -519,6 +552,8 @@ app.post("/create-session",sessionCheck.isOwner,upload.none(),async(req,res)=>{
    }
 });
 
+
+//  returns a list of all sessions for a particular match
 app.post("/sessions-list",sessionCheck.isOwner,upload.none(),async (req,res)=>{
    try{
        const {market_id} = req.body;
@@ -534,6 +569,8 @@ app.post("/sessions-list",sessionCheck.isOwner,upload.none(),async (req,res)=>{
    }
 });
 
+
+//  api to change setting of a session
 app.post("/session-setting",sessionCheck.isOwner,upload.none(),async(req,res)=>{
    try{
       const {id,market_id,state,no_run,yes_range,type} = req.body;
@@ -551,6 +588,8 @@ app.post("/session-setting",sessionCheck.isOwner,upload.none(),async(req,res)=>{
    }
 });
 
+
+// api to declare a session
 app.post("/declare-session",sessionCheck.isOwner,upload.none(), async(req,res)=>{
    try{
        const {id,decision_run} = req.body;
@@ -568,6 +607,8 @@ app.post("/declare-session",sessionCheck.isOwner,upload.none(), async(req,res)=>
    }
 });
 
+
+//  api to abandon a session
 app.post("/session-abandon",sessionCheck.isOwner,upload.none(),async(req,res)=>{
    try{
        const {id} = req.body;
@@ -600,6 +641,7 @@ app.post("/session-abandon",sessionCheck.isOwner,upload.none(),async(req,res)=>{
 
 // MANAGE PASSWORD SECTION
 
+//  api to manage password for this account 
 app.post("/manage-password",sessionCheck.isOwner, upload.none(), async (req,res)=>{
    try{
        console.log(req.user);
@@ -645,7 +687,7 @@ app.get("/matchbhav",sessionCheck.isAuth, (req, res) => {
 //   }
 // });
 
-
+//  api for logout
 app.get("/logout",sessionCheck.isOwner, upload.none(), async (req,res) => {
     console.log(req.session);
     req.session.destroy();

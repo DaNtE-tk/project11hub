@@ -74,6 +74,7 @@ const matchSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
+    won_by:{},
     odds_type:{},
     bet_delay_time:{type: Number},
     fav_team:{type: String},
@@ -89,7 +90,7 @@ const matchSchema = new mongoose.Schema({
     socket:{},
     match_bet_status:{},
     session_bet_status:{},
-    notification:{}
+    notification:{},
 });
 matchSchema.set('timestamps', true);
 module.exports = mongoose.model('mcreate',matchSchema);
