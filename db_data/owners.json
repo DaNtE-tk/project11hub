@@ -1,0 +1,1 @@
+{"_id":{"$oid":"62f8e3ba4758e589aaba8b57"},"id":1,"username":"owner1","first_name":"Tushar","last_name":"Kashyap","status":"active","contact_no":"1234543232","role":"owner","email":"owner@hub.com","password":"testpassword","createdAt":{"$date":"2022-08-14T11:59:54.104Z"},"updatedAt":{"$date":"2022-08-18T07:11:37.217Z"},"__v":0}

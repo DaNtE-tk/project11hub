@@ -1,0 +1,4 @@
+{"_id":{"$oid":"6300967c259e59bc74f76891"},"id":"1","client_uid":"C19","market_id":"99935","rate":"0.8","mode":"L","amount":1000,"state":"bottom","top_position":-1000,"bottom_position":800,"__v":0}
+{"_id":{"$oid":"63009733a11bc83c7bb8c85a"},"id":"2","bet_type":"match","client_uid":"C19","market_id":"99935","rate":"0.8","mode":"L","amount":1000,"state":"bottom","top_position":-1000,"bottom_position":800,"__v":0}
+{"_id":{"$oid":"6303754ea0548c2781fd4bde"},"id":"3","bet_type":"match","client_uid":"C19","market_id":"99935","amount":1000,"rate":"0.8","mode":"L","state":"bottom","top_position":-1000,"bottom_position":800,"name":null,"__v":0}
+{"_id":{"$oid":"63037554a0548c2781fd4be2"},"id":"4","bet_type":"session","client_uid":"C19","market_id":"99935","amount":1000,"name":"second session","__v":0}

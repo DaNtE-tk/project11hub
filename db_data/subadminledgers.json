@@ -1,0 +1,4 @@
+{"_id":{"$oid":"6305fc511b39fabd779e76e7"},"id":"1","subadmin_uid":"SUB36","date":"24/8/2022","collection_name":"trial collection","debit":0,"credit":1000,"balance":1000,"payment_type":"liya","remark":"","__v":0}
+{"_id":{"$oid":"6310bef2ca0bc4d08280801c"},"id":"2","subadmin_uid":"SUB36","date":"24/8/2022","collection_name":"trial collection","debit":0,"credit":1000,"balance":1000,"payment_type":"liya","remark":"","__v":0}
+{"_id":{"$oid":"6310befeca0bc4d082808020"},"id":"3","subadmin_uid":"SUB36","date":"24/8/2022","collection_name":"trial collection","debit":0,"credit":120,"balance":120,"payment_type":"liya","remark":"","__v":0}
+{"_id":{"$oid":"6310bf26ca0bc4d082808024"},"id":"4","subadmin_uid":"SUB36","date":"24/8/2022","collection_name":"trial collection","debit":167,"credit":0,"balance":-167,"payment_type":"liya","remark":"","__v":0}

@@ -1,0 +1,2 @@
+{"_id":{"$oid":"63037dd9c8326d9327028eb4"},"id":"1","client_uid":"C19","date":"2019-11-16 10:15:00","remark":"new match name","won_by":"team1","won":"1000","lost":0.0}
+{"_id":{"$oid":"63037e274f071aef041d9e81"},"id":"2","client_uid":"C19","date":"2019-11-16 10:15:00","remark":"Today-VS-Tomorrow","won_by":"Tomorrow","won":"0","lost":"245"}
